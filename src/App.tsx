@@ -13,7 +13,7 @@ function App() {
     setCellData(copy);
   };
 
-  const generateCells = (
+  const generateCanvas = (
     height: number,
     width: number,
     color: string
@@ -40,12 +40,12 @@ function App() {
   const [heightInput, setHeightInput] = useState<number>(height);
   const [widthInput, setWidthInput] = useState<number>(width);
   const [cellData, setCellData] = useState<string[]>(
-    generateCells(height, width, cellColor)
+    generateCanvas(height, width, cellColor)
   );
   const [mouseDown, setMouseDown] = useState<boolean>(false);
 
   useEffect(() => {
-    setCellData(generateCells(height, width, "#ffffff"));
+    setCellData(generateCanvas(height, width, "#ffffff"));
     setHeightInput(height);
     setWidthInput(width);
   }, [canvasDimension]);
@@ -105,7 +105,7 @@ function App() {
       <button
         onClick={() => {
           setCanvasDimension({ height: heightInput, width: widthInput });
-          setCellData(generateCells(height, width, "#ffffff"));
+          setCellData(generateCanvas(height, width, "#ffffff"));
         }}
       >
         Custom size
@@ -114,7 +114,7 @@ function App() {
       <button
         onClick={() => {
           setCanvasDimension({ height: 10, width: 10 });
-          setCellData(generateCells(height, width, "#ffffff"));
+          setCellData(generateCanvas(height, width, "#ffffff"));
         }}
       >
         1X1
@@ -123,7 +123,7 @@ function App() {
       <button
         onClick={() => {
           setCanvasDimension({ height: 10 * 2, width: 10 });
-          setCellData(generateCells(height, width, "#ffffff"));
+          setCellData(generateCanvas(height, width, "#ffffff"));
         }}
       >
         1X2
@@ -132,7 +132,7 @@ function App() {
       <button
         onClick={() => {
           setCanvasDimension({ height: 10, width: 10 * 2 });
-          setCellData(generateCells(height, width, "#ffffff"));
+          setCellData(generateCanvas(height, width, "#ffffff"));
         }}
       >
         2X1
