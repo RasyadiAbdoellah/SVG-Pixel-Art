@@ -1,5 +1,12 @@
 import { useState, useEffect, ReactElement } from "react";
+import {renderToString} from "react-dom/server"
 import "./App.css";
+
+/**
+ * Rough design of an SVG based pixel canvas. Managing canvas state is difficult. 
+ * It'd be best to build an immutable state system to handle all its functionality
+ * RTK Time?
+ */
 
 type CanvasDimension = {
   height: number;
@@ -82,6 +89,9 @@ function App() {
       );
     }
   }
+
+  //NOTE: saving to SVG requires generating the static XML for the SVG
+  console.log(renderToString(<>{cells}</>))
 
   return (
     <div>
