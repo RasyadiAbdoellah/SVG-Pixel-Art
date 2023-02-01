@@ -5,7 +5,7 @@ import "./App.css";
 /**
  * Rough design of an SVG based pixel canvas. Managing canvas state is difficult. 
  * It'd be best to build an immutable state system to handle all its functionality
- * RTK Time?
+ * TIme for RTK or stick to pure React with Context?
  */
 
 type CanvasDimension = {
