@@ -1,61 +1,30 @@
-import { useState, useEffect, ReactElement } from "react";
-import {renderToString} from "react-dom/server"
+import { useState, useEffect, ReactElement, useCallback } from "react";
+import { renderToString } from "react-dom/server";
+import { useSelector, useDispatch } from "react-redux";
+
+import { RootState, changeDimensions, changePixelValue } from "./app/store";
 import "./App.css";
-
-/**
- * Rough design of an SVG based pixel canvas. Managing canvas state is difficult. 
- * It'd be best to build an immutable state system to handle all its functionality
- * TIme for RTK or stick to pure React with Context?
- */
-
-type CanvasDimension = {
-  height: number;
-  width: number;
-}
+import { PayloadAction } from "@reduxjs/toolkit";
 
 function App() {
-  const updateCell = (x: number, y: number) => {
-    const copy = cellData.slice();
-    copy[y * width + x] = cellColor;
-    setCellData(copy);
-  };
+  const {
+    dimensions: { height, width },
+    pixelValues,
+  } = useSelector((state: RootState) => state.canvas);
+  const dispatch = useDispatch();
 
-  const generateCanvas = (
-    height: number,
-    width: number,
-    color: string
-  ): string[] => {
-    const cellColors: string[] = new Array(height * width).fill(color);
-
-    //generate red border
-
-    // for (let y = 0; y < height; y++) {
-    //   for (let x = 0; x < width; x++) {
-    //     if (y === 0 || y === height - 1) {
-    //       cellColors[y * width + x] = "red";
-    //     }
-    //   }
-    //   cellColors[y * width] = "red";
-    //   cellColors[y * width + width - 1] = "red";
-    // }
-    return cellColors;
-  };
+  //wrap changePixelValue in the dispatch
+  const updatePixelValue = useCallback(
+    (data: Parameters<typeof changePixelValue>[0]) => {
+      return () => dispatch(changePixelValue(data));
+    },
+    []
+  );
 
   const [cellColor, setCellColor] = useState<string>("#FFFFFF");
-  const [canvasDimension, setCanvasDimension] = useState<CanvasDimension>({ height: 10, width: 10 });
-  const { height, width } = canvasDimension;
   const [heightInput, setHeightInput] = useState<number>(height);
   const [widthInput, setWidthInput] = useState<number>(width);
-  const [cellData, setCellData] = useState<string[]>(
-    generateCanvas(height, width, cellColor)
-  );
   const [mouseDown, setMouseDown] = useState<boolean>(false);
-
-  useEffect(() => {
-    setCellData(generateCanvas(height, width, "#ffffff"));
-    setHeightInput(height);
-    setWidthInput(width);
-  }, [canvasDimension]);
 
   const cellSize = 10;
   const viewWidth = cellSize * width;
@@ -74,16 +43,18 @@ function App() {
           x={x * cellSize}
           y={y * cellSize}
           stroke="grey"
-          fill={cellData[y * width + x]}
-          onClick={() => updateCell(x, y)}
-          onMouseDown={()=> {
-            setMouseDown(true)
+          fill={pixelValues[y * width + x]}
+          onClick={() => {
+            updatePixelValue({ x, y, value: cellColor });
+          }}
+          onMouseDown={() => {
+            setMouseDown(true);
           }}
           onMouseMove={() => {
-            mouseDown && updateCell(x, y)
+            mouseDown && dispatch(changePixelValue({ x, y, value: cellColor }));
           }}
-          onMouseUp={()=> {
-            setMouseDown(false)
+          onMouseUp={() => {
+            setMouseDown(false);
           }}
         />
       );
@@ -91,7 +62,7 @@ function App() {
   }
 
   //NOTE: saving to SVG requires generating the static XML for the SVG
-  console.log(renderToString(<>{cells}</>))
+  // console.log(renderToString(<>{cells}</>))
 
   return (
     <div>
@@ -114,8 +85,9 @@ function App() {
 
       <button
         onClick={() => {
-          setCanvasDimension({ height: heightInput, width: widthInput });
-          setCellData(generateCanvas(height, width, "#ffffff"));
+          dispatch(
+            changeDimensions({ height: heightInput, width: widthInput })
+          );
         }}
       >
         Custom size
@@ -123,8 +95,7 @@ function App() {
 
       <button
         onClick={() => {
-          setCanvasDimension({ height: 10, width: 10 });
-          setCellData(generateCanvas(height, width, "#ffffff"));
+          dispatch(changeDimensions({ height: 10, width: 10 }));
         }}
       >
         1X1
@@ -132,8 +103,7 @@ function App() {
 
       <button
         onClick={() => {
-          setCanvasDimension({ height: 10 * 2, width: 10 });
-          setCellData(generateCanvas(height, width, "#ffffff"));
+          dispatch(changeDimensions({ height: 20, width: 10 }));
         }}
       >
         1X2
@@ -141,8 +111,7 @@ function App() {
 
       <button
         onClick={() => {
-          setCanvasDimension({ height: 10, width: 10 * 2 });
-          setCellData(generateCanvas(height, width, "#ffffff"));
+          dispatch(changeDimensions({ height: 10, width: 20 }));
         }}
       >
         2X1
