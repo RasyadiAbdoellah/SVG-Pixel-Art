@@ -1,19 +1,17 @@
-import { useState, useEffect, ReactElement, useCallback } from "react";
+import { useState, ReactElement } from "react";
 import { renderToString } from "react-dom/server";
-import { useSelector, useDispatch } from "react-redux";
-
-import { RootState, changeDimensions, changePixelValue } from "./app/store";
+import { useAppSelector, useAppDispatch } from "./app/hooks";
+import { changeDimensions, changePixelValue } from "./app/canvas";
 import "./App.css";
-import { PayloadAction } from "@reduxjs/toolkit";
 
 function App() {
   const {
     dimensions: { height, width },
     pixelValues,
-  } = useSelector((state: RootState) => state.canvas);
-  const dispatch = useDispatch();
+  } = useAppSelector(state => state.canvas);
+  const dispatch = useAppDispatch();
 
-  const [cellColor, setCellColor] = useState<string>("#FFFFFF");
+  const [activeColor, setActiveColor] = useState<string>("#FFFFFF");
   const [heightInput, setHeightInput] = useState<number>(height);
   const [widthInput, setWidthInput] = useState<number>(width);
   const [mouseDown, setMouseDown] = useState<boolean>(false);
@@ -37,13 +35,13 @@ function App() {
           stroke="grey"
           fill={pixelValues[y * width + x]}
           onClick={() => {
-            changePixelValue({ x, y, value: cellColor });
+            changePixelValue({ x, y, value: activeColor });
           }}
           onMouseDown={() => {
             setMouseDown(true);
           }}
           onMouseMove={() => {
-            mouseDown && dispatch(changePixelValue({ x, y, value: cellColor }));
+            mouseDown && dispatch(changePixelValue({ x, y, value: activeColor }));
           }}
           onMouseUp={() => {
             setMouseDown(false);
@@ -60,8 +58,8 @@ function App() {
     <div>
       <input
         type="color"
-        value={cellColor}
-        onChange={(e) => setCellColor(e.target.value)}
+        value={activeColor}
+        onChange={(e) => setActiveColor(e.target.value)}
       />
       <input
         type="number"
