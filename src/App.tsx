@@ -13,7 +13,9 @@ function App() {
   } = useSelector((state: RootState) => state.canvas);
   const dispatch = useDispatch();
 
-  //wrap changePixelValue in the dispatch
+  //wrap changePixelValue with dispatch and wrap that in useCallback.
+  // This works but the syntax is confusing so it's not used for now
+  
   const updatePixelValue = useCallback(
     (data: Parameters<typeof changePixelValue>[0]) => {
       return () => dispatch(changePixelValue(data));
@@ -45,7 +47,7 @@ function App() {
           stroke="grey"
           fill={pixelValues[y * width + x]}
           onClick={() => {
-            updatePixelValue({ x, y, value: cellColor });
+            changePixelValue({ x, y, value: cellColor });
           }}
           onMouseDown={() => {
             setMouseDown(true);
