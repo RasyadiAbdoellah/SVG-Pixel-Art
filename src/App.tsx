@@ -13,15 +13,6 @@ function App() {
   } = useSelector((state: RootState) => state.canvas);
   const dispatch = useDispatch();
 
-  //wrap changePixelValue with dispatch and wrap that in useCallback.
-  // This works but the syntax is confusing so it's not used for now
-  const updatePixelValue = useCallback(
-    (data: Parameters<typeof changePixelValue>[0]) => {
-      return () => dispatch(changePixelValue(data));
-    },
-    []
-  );
-
   const [cellColor, setCellColor] = useState<string>("#FFFFFF");
   const [heightInput, setHeightInput] = useState<number>(height);
   const [widthInput, setWidthInput] = useState<number>(width);
