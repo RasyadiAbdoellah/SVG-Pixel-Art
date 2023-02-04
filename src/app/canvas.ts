@@ -9,18 +9,22 @@ type canvasState = {
     width: number;
   };
   pixelValues: string[];
+  baseColour: string;
 };
 
-const initialDimensions = {
+const initialDimensions: canvasState["dimensions"] = {
   width: 10,
   height: 10,
 };
 
+const initialbaseColour: canvasState["baseColour"] = "#ffffff"
+
 const initialState: canvasState = {
   dimensions: initialDimensions,
+  baseColour: initialbaseColour,
   pixelValues: new Array(
     initialDimensions.width * initialDimensions.height
-  ).fill("#FFFFFF"),
+  ).fill(initialbaseColour),
 }
 
 const canvasSlice = createSlice({
@@ -43,10 +47,14 @@ const canvasSlice = createSlice({
       state.dimensions = action.payload;
       state.pixelValues = new Array(
         action.payload.width * action.payload.height
-      ).fill("#FFFFFF");
+      ).fill(state.baseColour);
     },
+    
+    changeBaseColour(state, action: PayloadAction<string>) {
+      state.baseColour = action.payload
+    }
   },
 });
 
 export default canvasSlice
-export const { changePixelValue, changeDimensions } = canvasSlice.actions;
+export const { changePixelValue, changeDimensions, changeBaseColour } = canvasSlice.actions;
