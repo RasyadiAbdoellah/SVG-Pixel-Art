@@ -10,6 +10,8 @@ type canvasState = {
   };
   pixelValues: string[];
   baseColour: string;
+  toolColour: string;
+  toolType: "brush" | "bucket";
 };
 
 const initialDimensions: canvasState["dimensions"] = {
@@ -17,14 +19,16 @@ const initialDimensions: canvasState["dimensions"] = {
   height: 10,
 };
 
-const initialbaseColour: canvasState["baseColour"] = "#ffffff"
+const initialColour: canvasState["baseColour"] = "#ffffff"
 
 const initialState: canvasState = {
   dimensions: initialDimensions,
-  baseColour: initialbaseColour,
+  baseColour: initialColour,
   pixelValues: new Array(
     initialDimensions.width * initialDimensions.height
-  ).fill(initialbaseColour),
+  ).fill(initialColour),
+  toolColour: initialColour,
+  toolType: "brush"
 }
 
 const canvasSlice = createSlice({
@@ -52,9 +56,13 @@ const canvasSlice = createSlice({
     
     changeBaseColour(state, action: PayloadAction<string>) {
       state.baseColour = action.payload
-    }
+    },
+
+    changeToolColour(state, action: PayloadAction<string>) {
+      state.toolColour = action.payload
+    },
   },
 });
 
 export default canvasSlice
-export const { changePixelValue, changeDimensions, changeBaseColour } = canvasSlice.actions;
+export const { changePixelValue, changeDimensions, changeBaseColour, changeToolColour } = canvasSlice.actions;

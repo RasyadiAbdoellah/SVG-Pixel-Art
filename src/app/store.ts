@@ -3,10 +3,12 @@ import {
 } from "@reduxjs/toolkit";
 
 import canvasSlice from "./canvas";
+import toolSlice from "./activeTool";
 
 const store = configureStore({
   reducer: {
     canvas: canvasSlice.reducer,
+    activeTool: toolSlice.reducer,
   },
 });
 
