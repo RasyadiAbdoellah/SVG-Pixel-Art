@@ -5,10 +5,12 @@ import {
   changeDimensions,
   changeBaseColour,
 } from "./app/canvas";
+import store from "./app/store";
 import { changeToolColour } from "./app/activeTool";
 import { HexColorPicker } from "react-colorful";
 import "./App.css";
 import PixelGrid from "./components/PixelGrid";
+import { Provider } from "react-redux";
 
 function App() {
 
@@ -26,7 +28,10 @@ function App() {
   const [widthInput, setWidthInput] = useState<number>(width);
 
   //NOTE: saving to SVG requires generating the static XML for the SVG
-  // console.log(renderToString(<>{cells}</>))
+  const createURI = () => {
+    const encodedOutput = btoa(renderToString(<Provider store={store}><PixelGrid/></Provider>))
+    return `data:image/svg+xml;base64,${encodedOutput}`
+  }
 
   return (
     <div>
@@ -90,6 +95,7 @@ function App() {
         2X1
       </button>
       <PixelGrid />
+      <a href={createURI()} download="pixel.svg">Create SVG file</a>
     </div>
   );
 }

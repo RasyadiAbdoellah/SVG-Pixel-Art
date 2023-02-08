@@ -49,6 +49,7 @@ const PixelGrid = () => {
         const x = i % width;
         return (
           <Pixel
+            key={i}
             pixelSize={cellSize}
             x={x}
             y={y}
