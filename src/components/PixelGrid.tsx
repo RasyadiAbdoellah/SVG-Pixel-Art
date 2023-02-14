@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { renderToString } from "react-dom/server";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { changePixelValue } from "../app/canvas";
 import Pixel from "./Pixel";
+import { RootState } from "../app/store";
+import "./PixelGrid.css";
 
 const PixelGrid = () => {
   const {
     canvas: {
-      dimensions: { height, width },
+      dimensions: { height, width, cellSize },
       pixelValues,
     },
     activeTool: { toolColour, toolType },
@@ -15,10 +16,16 @@ const PixelGrid = () => {
   const dispatch = useAppDispatch();
   const [mouseDown, setMouseDown] = useState<boolean>(false);
 
-  const handlers = (x: number, y: number, value: string) => {
+  const handlers = (x: number, y: number, value?: string) => {
     return {
       click() {
-        dispatch(changePixelValue({ x, y, value }));
+        dispatch(
+          changePixelValue({
+            x,
+            y,
+            value: toolType === "eraser" ? undefined : value,
+          })
+        );
       },
       mouseDown() {
         setMouseDown(true);
@@ -32,7 +39,6 @@ const PixelGrid = () => {
     };
   };
 
-  const cellSize = 50;
   const viewWidth = cellSize * width;
   const viewHeight = cellSize * height;
 
@@ -43,6 +49,7 @@ const PixelGrid = () => {
       height={viewHeight}
       viewBox={`0 0 ${viewWidth} ${viewHeight}`}
       version="1.1"
+      className="grid"
     >
       {pixelValues.map((value, i) => {
         const y = Math.floor(i / width);
@@ -53,10 +60,37 @@ const PixelGrid = () => {
             pixelSize={cellSize}
             x={x}
             y={y}
-            colourVal={value}
+            colourVal={value ? value : "transparent"}
             handlers={handlers(x, y, toolColour)}
           />
         );
+      })}
+    </svg>
+  );
+};
+
+export const ExportGrid = ({ canvas }: { canvas: RootState["canvas"] }) => {
+  const {
+    dimensions: { height, width, cellSize },
+    pixelValues,
+  } = canvas;
+  const imgWidth = cellSize * width;
+  const imgHeight = cellSize * height;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={imgWidth}
+      height={imgHeight}
+      viewBox={`0 0 ${imgWidth} ${imgHeight}`}
+      version="1.1"
+      className="grid"
+    >
+      {pixelValues.map((value, i) => {
+        const y = Math.floor(i / width);
+        const x = i % width;
+        return value ? (
+          <Pixel key={i} pixelSize={cellSize} x={x} y={y} colourVal={value} />
+        ) : null;
       })}
     </svg>
   );

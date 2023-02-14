@@ -4,8 +4,8 @@ import {
 } from "@reduxjs/toolkit";
 
 type toolState = {
-  toolColour: string;
-  toolType: "brush" | "bucket";
+  toolColour?: string;
+  toolType: "brush" | "bucket" | "eraser";
 };
 
 

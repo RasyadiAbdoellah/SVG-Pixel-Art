@@ -7,28 +7,25 @@ type canvasState = {
   dimensions: {
     height: number;
     width: number;
+    cellSize: number;
   };
-  pixelValues: string[];
-  baseColour: string;
-  toolColour: string;
-  toolType: "brush" | "bucket";
+  pixelValues: string[] | undefined[];
+  // baseColour: string;
 };
 
 const initialDimensions: canvasState["dimensions"] = {
   width: 10,
   height: 10,
+  cellSize: 50,
 };
 
-const initialColour: canvasState["baseColour"] = "#ffffff"
 
 const initialState: canvasState = {
   dimensions: initialDimensions,
-  baseColour: initialColour,
+  // baseColour: "#ffffff",
   pixelValues: new Array(
     initialDimensions.width * initialDimensions.height
-  ).fill(initialColour),
-  toolColour: initialColour,
-  toolType: "brush"
+  ).fill(undefined)
 }
 
 const canvasSlice = createSlice({
@@ -37,10 +34,9 @@ const canvasSlice = createSlice({
   reducers: {
     changePixelValue(
       state,
-      action: PayloadAction<{ x: number; y: number; value: string }>
+      action: PayloadAction<{ x: number; y: number; value?: string }>
     ) {
       const { x, y, value } = action.payload;
-      console.log(y * state.dimensions.width + x)
       state.pixelValues[y * state.dimensions.width + x] = value;
     },
 
@@ -48,21 +44,18 @@ const canvasSlice = createSlice({
       state,
       action: PayloadAction<{ width: number; height: number }>
     ) {
-      state.dimensions = action.payload;
+      state.dimensions.width = action.payload.width;
+      state.dimensions.height = action.payload.height;
       state.pixelValues = new Array(
         action.payload.width * action.payload.height
-      ).fill(state.baseColour);
+      ).fill(undefined);
     },
     
-    changeBaseColour(state, action: PayloadAction<string>) {
-      state.baseColour = action.payload
-    },
-
-    changeToolColour(state, action: PayloadAction<string>) {
-      state.toolColour = action.payload
-    },
+    // changeBaseColour(state, action: PayloadAction<string>) {
+    //   state.baseColour = action.payload
+    // },
   },
 });
 
 export default canvasSlice
-export const { changePixelValue, changeDimensions, changeBaseColour, changeToolColour } = canvasSlice.actions;
+export const { changePixelValue, changeDimensions } = canvasSlice.actions;
