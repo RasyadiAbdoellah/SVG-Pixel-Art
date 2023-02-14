@@ -31,7 +31,14 @@ const PixelGrid = () => {
         setMouseDown(true);
       },
       mouseMove() {
-        mouseDown && dispatch(changePixelValue({ x, y, value }));
+        mouseDown &&
+          dispatch(
+            changePixelValue({
+              x,
+              y,
+              value: toolType === "eraser" ? undefined : value,
+            })
+          );
       },
       mouseUp() {
         setMouseDown(false);
